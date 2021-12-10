@@ -1,4 +1,4 @@
-package com.collarmc.molib;
+package com.collarmc.molib.http;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

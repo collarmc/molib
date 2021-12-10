@@ -1,4 +1,4 @@
-package com.collarmc.molib;
+package com.collarmc.molib.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -8,7 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-final class Http {
+public final class Http {
     private final ObjectMapper mapper;
     private final HttpClient http = HttpClient.newBuilder().build();
 

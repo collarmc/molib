@@ -1,4 +1,4 @@
-package com.collarmc.molib;
+package com.collarmc.molib.http;
 
 import com.collarmc.molib.profile.PlayerProfileInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;

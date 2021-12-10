@@ -22,14 +22,14 @@ public class PlayerProfileInfo {
         return UUID.fromString(id.replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"));
     }
 
-    public static final class PlayerProfileProperty {
+    public static final class Property {
         @JsonProperty("name")
         public final String name;
         @JsonProperty("value")
         public final String value;
 
-        public PlayerProfileProperty(@JsonProperty("name") String name,
-                                     @JsonProperty("value") String value) {
+        public Property(@JsonProperty("name") String name,
+                        @JsonProperty("value") String value) {
             this.name = name;
             this.value = value;
         }
@@ -64,7 +64,7 @@ public class PlayerProfileInfo {
 
         private Optional<String> getTexture(String name) {
             Texture texture = textures.get(name);
-            return texture == null ? Optional.empty() : Optional.of(texture.url);
+            return Optional.ofNullable(texture.url);
         }
     }
 

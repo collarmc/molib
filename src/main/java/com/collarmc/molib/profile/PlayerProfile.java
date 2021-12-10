@@ -10,11 +10,11 @@ import java.util.Optional;
 
 public final class PlayerProfile extends PlayerProfileInfo {
     @JsonProperty("properties")
-    public final List<PlayerProfileProperty> properties;
+    public final List<Property> properties;
 
     public PlayerProfile(@JsonProperty("id") String id,
                          @JsonProperty("name") String name,
-                         @JsonProperty("properies") List<PlayerProfileProperty> properties) {
+                         @JsonProperty("properies") List<Property> properties) {
         super(id, name);
         this.properties = properties;
     }

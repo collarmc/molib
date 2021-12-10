@@ -1,7 +1,12 @@
 package com.collarmc.molib;
 
+import com.collarmc.molib.http.*;
 import com.collarmc.molib.profile.PlayerProfile;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.common.io.BaseEncoding;
 import io.mikael.urlbuilder.UrlBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +31,13 @@ public final class Mojang {
     public static final String DEFAULT_AUTH_SERVER = "https://authserver.mojang.com/";
     public static final String DEFAULT_SESSION_SERVER = "https://sessionserver.mojang.com/";
 
-    public static final ObjectMapper MAPPER = new ObjectMapper();
+    public static final ObjectMapper MAPPER = JsonMapper.builder()
+            .configure(JsonReadFeature.ALLOW_TRAILING_COMMA, true)
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, false)
+            .build();
 
     private final Http http = new Http(MAPPER);
     private final String sessionServerBaseUrl;
