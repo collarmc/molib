@@ -12,15 +12,13 @@ import io.mikael.urlbuilder.UrlBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -175,5 +173,17 @@ public final class Mojang {
             throw new IllegalStateException("problem generating the key", e);
         }
         return kp;
+    }
+
+    public static String getServerId(String base, PublicKey publicKey, SecretKey secretKey) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            digest.update(base.getBytes(StandardCharsets.ISO_8859_1));
+            digest.update(secretKey.getEncoded());
+            digest.update(publicKey.getEncoded());
+            return (new BigInteger(digest.digest())).toString(16);
+        } catch (NoSuchAlgorithmException var5) {
+            throw new IllegalStateException("Server ID hash algorithm unavailable.", var5);
+        }
     }
 }
