@@ -4,12 +4,14 @@ import com.collarmc.molib.http.Agent;
 import com.collarmc.molib.http.AuthenticateRequest;
 import com.collarmc.molib.http.AuthenticateResponse;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Optional;
 
 import static com.collarmc.molib.http.Agent.*;
 
+@Ignore
 public class MojangTest {
     @Test
     public void authenticate() {

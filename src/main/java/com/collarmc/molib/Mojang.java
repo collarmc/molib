@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.google.common.io.BaseEncoding;
-import io.mikael.urlbuilder.UrlBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Optional;
@@ -42,8 +41,8 @@ public final class Mojang {
     private final String authServerBaseUrl;
 
     public Mojang(String sessionServerBaseUrl, String authServerBaseUrl) {
-        this.sessionServerBaseUrl = sessionServerBaseUrl;
-        this.authServerBaseUrl = authServerBaseUrl;
+        this.sessionServerBaseUrl = sessionServerBaseUrl.endsWith("/") ? sessionServerBaseUrl : sessionServerBaseUrl + "/";
+        this.authServerBaseUrl = authServerBaseUrl.endsWith("/") ? authServerBaseUrl : authServerBaseUrl + "/";
     }
 
     public Mojang() {
@@ -58,7 +57,7 @@ public final class Mojang {
      */
     public PlayerProfile getProfile(UUID id) throws IOException {
         String profileId = id.toString().replace("-", "");
-        return http.httpGet(sessionServerBaseUrl + "session/minecraft/profile/" + profileId, PlayerProfile.class);
+        return http.httpGet(URI.create(String.format(sessionServerBaseUrl + "session/minecraft/profile/%s", profileId)), PlayerProfile.class);
     }
 
     /**
@@ -82,7 +81,7 @@ public final class Mojang {
             byte[] digest = md.digest();
             String serverId = new BigInteger(digest).toString(16);
             JoinRequest joinReq = new JoinRequest(Agent.MINECRAFT, session.accessToken, toProfileId(session.id), serverId);
-            http.post(sessionServerBaseUrl + "session/minecraft/join", joinReq, Void.class);
+            http.post(URI.create(sessionServerBaseUrl + "session/minecraft/join"), joinReq, Void.class);
             return Optional.of(new JoinServerResponse(serverId));
         } catch (IOException e) {
             LOGGER.error("Could not start verification with Mojang", e);
@@ -98,10 +97,8 @@ public final class Mojang {
      */
     public boolean hasJoined(MinecraftSession session, String serverId) {
         try {
-            UrlBuilder builder = UrlBuilder.fromString(sessionServerBaseUrl + "session/minecraft/hasJoined")
-                    .addParameter("username", session.username)
-                    .addParameter("serverId", serverId);
-            HasJoinedResponse hasJoinedResponse = http.httpGet(builder.toString(), HasJoinedResponse.class);
+            URI uri = URI.create(String.format(sessionServerBaseUrl + "session/minecraft/hasJoined?username=%s&serverId=%s", session.username, serverId));
+            HasJoinedResponse hasJoinedResponse = http.httpGet(uri, HasJoinedResponse.class);
             return hasJoinedResponse.id.equals(toProfileId(session.id));
         } catch (Throwable e) {
             LOGGER.error("Couldn't verify " + session.username,e);
@@ -116,7 +113,7 @@ public final class Mojang {
      */
     public boolean validateToken(ValidateTokenRequest request) {
         try {
-            http.post(authServerBaseUrl + "/validate", request, Void.class);
+            http.post(URI.create(authServerBaseUrl + "/validate"), request, Void.class);
             return true;
         } catch (Throwable e) {
             return false;
@@ -130,7 +127,7 @@ public final class Mojang {
      */
     public Optional<RefreshTokenResponse> refreshToken(RefreshTokenRequest request) {
         try {
-            return Optional.of(http.post(authServerBaseUrl + "/refresh", request, RefreshTokenResponse.class));
+            return Optional.of(http.post(URI.create(authServerBaseUrl + "/refresh"), request, RefreshTokenResponse.class));
         } catch (Throwable e) {
             return Optional.empty();
         }
@@ -143,7 +140,7 @@ public final class Mojang {
      */
     public Optional<AuthenticateResponse> authenticate(AuthenticateRequest request) {
         try {
-            return Optional.of(http.post(authServerBaseUrl + "/authenticate", request, AuthenticateResponse.class));
+            return Optional.of(http.post(URI.create(authServerBaseUrl + "/authenticate"), request, AuthenticateResponse.class));
         } catch (Throwable e) {
             LOGGER.error("auth failed " + e.getMessage(), e);
             return Optional.empty();
@@ -154,7 +151,7 @@ public final class Mojang {
         StringWriter writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
         printWriter.println("-----BEGIN PUBLIC KEY-----");
-        printWriter.println(BaseEncoding.base32().encode(keyPair.getPublic().getEncoded()));
+        printWriter.println(Base32.encode(keyPair.getPublic().getEncoded()));
         printWriter.println("-----END PUBLIC KEY-----");
         return writer.toString();
     }

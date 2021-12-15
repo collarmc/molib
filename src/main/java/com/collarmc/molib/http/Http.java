@@ -16,17 +16,17 @@ public final class Http {
         this.mapper = mapper;
     }
 
-    public  <T> T post(final String url, Object req, Class<T> responseType) throws IOException {
+    public <T> T post(URI uri, Object req, Class<T> responseType) throws IOException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(req)))
                 .build();
         return execute(request, responseType);
     }
 
-    public  <T> T httpGet(String url, Class<T> responseType) throws IOException {
+    public  <T> T httpGet(URI uri, Class<T> responseType) throws IOException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(uri)
                 .GET()
                 .build();
         return execute(request, responseType);
@@ -40,9 +40,12 @@ public final class Http {
             throw new IOException("Request interrupted", e);
         }
         int code = response.statusCode();
-        if (code != 200) {
-            throw new IOException("status: " + code + " body: " + response.body());
+        if (code >= 200 && code <= 299) {
+            if (responseType == Void.class) {
+                return null;
+            }
+            return mapper.readValue(response.body(), responseType);
         }
-        return mapper.readValue(response.body(), responseType);
+        throw new IOException("status: " + code + " body: " + response.body());
     }
 }
