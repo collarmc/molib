@@ -26,8 +26,8 @@ public final class Mojang {
 
     private static final Logger LOGGER = LogManager.getLogger(Mojang.class.getName());
 
-    public static final String DEFAULT_AUTH_SERVER = "https://authserver.mojang.com/";
-    public static final String DEFAULT_SESSION_SERVER = "https://sessionserver.mojang.com/";
+    public static final String DEFAULT_AUTH_SERVER = "https://authserver.mojang.com";
+    public static final String DEFAULT_SESSION_SERVER = "https://sessionserver.mojang.com";
 
     public static final ObjectMapper MAPPER = JsonMapper.builder()
             .configure(JsonReadFeature.ALLOW_TRAILING_COMMA, true)
@@ -143,7 +143,7 @@ public final class Mojang {
      */
     public Optional<AuthenticateResponse> authenticate(AuthenticateRequest request) {
         try {
-            return Optional.of(http.post(authServerBaseUrl + "/authenticate", AuthenticateResponse.class, AuthenticateResponse.class));
+            return Optional.of(http.post(authServerBaseUrl + "/authenticate", request, AuthenticateResponse.class));
         } catch (Throwable e) {
             LOGGER.error("auth failed " + e.getMessage(), e);
             return Optional.empty();

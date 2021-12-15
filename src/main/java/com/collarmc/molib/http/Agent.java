@@ -1,5 +1,6 @@
 package com.collarmc.molib.http;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Agent {
@@ -11,6 +12,7 @@ public class Agent {
     @JsonProperty("version")
     public final Integer version;
 
+    @JsonCreator
     public Agent(@JsonProperty("name") String name,
                  @JsonProperty("version") Integer version) {
         this.name = name;
