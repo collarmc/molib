@@ -6,7 +6,7 @@
 
     <groupId>com.collarmc</groupId>
     <artifactId>molib</artifactId>
-    <version>1.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
