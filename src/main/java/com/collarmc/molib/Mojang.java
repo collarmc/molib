@@ -64,22 +64,11 @@ public final class Mojang {
      * Join
      * @param session
      * @param serverPublicKey
-     * @param sharedSecret
+     * @param serverId
      * @return
      */
-    public Optional<JoinServerResponse> joinServer(MinecraftSession session, byte[] serverPublicKey, byte[] sharedSecret) {
+    public Optional<JoinServerResponse> joinServer(MinecraftSession session, byte[] serverPublicKey, String serverId) {
         try {
-            MessageDigest md;
-            try {
-                md = MessageDigest.getInstance("SHA-1");
-            } catch (NoSuchAlgorithmException e) {
-                throw new IllegalStateException(e);
-            }
-            md.update("".getBytes(StandardCharsets.ISO_8859_1));
-            md.update(sharedSecret);
-            md.update(serverPublicKey);
-            byte[] digest = md.digest();
-            String serverId = new BigInteger(digest).toString(16);
             JoinRequest joinReq = new JoinRequest(Agent.MINECRAFT, session.accessToken, toProfileId(session.id), serverId);
             http.post(URI.create(sessionServerBaseUrl + "session/minecraft/join"), joinReq, Void.class);
             return Optional.of(new JoinServerResponse(serverId));
