@@ -1,5 +1,6 @@
 package com.collarmc.molib.http;
 
+import com.collarmc.molib.MinecraftSession;
 import com.collarmc.molib.profile.PlayerProfile;
 import com.collarmc.molib.profile.PlayerProfileInfo;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -30,5 +31,9 @@ public final class AuthenticateResponse {
         this.selectedProfile = selectedProfile;
         this.user = user;
         this.availableProfiles = availableProfiles;
+    }
+
+    public MinecraftSession toMinecraftSession() {
+        return new MinecraftSession(user.toId(), user.name, accessToken);
     }
 }
