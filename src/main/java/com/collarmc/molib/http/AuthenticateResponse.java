@@ -34,6 +34,6 @@ public final class AuthenticateResponse {
     }
 
     public MinecraftSession toMinecraftSession() {
-        return new MinecraftSession(user.toId(), user.name, accessToken);
+        return new MinecraftSession(selectedProfile.toId(), selectedProfile.name, accessToken);
     }
 }
