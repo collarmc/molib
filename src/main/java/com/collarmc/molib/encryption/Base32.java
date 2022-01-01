@@ -1,4 +1,4 @@
-package com.collarmc.molib;
+package com.collarmc.molib.encryption;
 
 /*
  * Copyright (PD) 2006 The Bitzi Corporation

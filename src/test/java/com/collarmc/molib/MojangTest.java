@@ -1,15 +1,13 @@
 package com.collarmc.molib;
 
-import com.collarmc.molib.http.Agent;
-import com.collarmc.molib.http.AuthenticateRequest;
-import com.collarmc.molib.http.AuthenticateResponse;
+import com.collarmc.molib.authentication.AuthenticationService;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Optional;
 
-import static com.collarmc.molib.http.Agent.*;
+import static com.collarmc.molib.authentication.AuthenticationService.Agent.MINECRAFT;
 
 @Ignore
 public class MojangTest {
@@ -17,7 +15,7 @@ public class MojangTest {
     public void authenticate() {
 
         Mojang mojang = new Mojang();
-        Optional<AuthenticateResponse> resp = mojang.authenticate(new AuthenticateRequest(
+        Optional<AuthenticationService.AuthenticateResponse> resp = mojang.auth().authenticate(new AuthenticationService.AuthenticateRequest(
                 MINECRAFT,
                 username(),
                 password(),
