@@ -37,7 +37,7 @@ public class SessionService {
      * @return player profile
      * @throws IOException if error occurs
      */
-    public Optional<PlayerProfile> getProfile(UUID id) throws IOException {
+    public Optional<PlayerProfile> getProfile(UUID id) {
         String profileId = id.toString().replace("-", "");
         return http.httpGet(URI.create(String.format(sessionServerBaseUrl + "session/minecraft/profile/%s", profileId)), Response.json(PlayerProfile.class));
     }

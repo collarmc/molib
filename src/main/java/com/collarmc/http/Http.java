@@ -32,7 +32,7 @@ public final class Http {
         return execute(request, responseType);
     }
 
-    public <T> Optional<T> httpGet(URI uri, Response<T> responseType) throws IOException {
+    public <T> Optional<T> httpGet(URI uri, Response<T> responseType) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
                 .GET()
