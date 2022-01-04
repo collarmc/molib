@@ -48,8 +48,4 @@ public final class Mojang {
     public SessionService sessions() {
         return new SessionService(sessionServerBaseUrl, http);
     }
-
-    public static String toProfileId(UUID id) {
-        return id.toString().replace("-", "");
-    }
 }

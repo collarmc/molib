@@ -54,6 +54,10 @@ public final class Validation {
         }
     }
 
+    public static String toMinecraftId(UUID id) {
+        return id.toString().replace("-", "");
+    }
+
     /**
      * Checks if either most or least significant bits of an account UUID are zero
      * @param id to test

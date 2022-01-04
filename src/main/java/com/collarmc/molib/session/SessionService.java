@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.collarmc.molib.Mojang.toProfileId;
+import static com.collarmc.molib.Validation.toMinecraftId;
 
 public class SessionService {
 
@@ -35,7 +35,6 @@ public class SessionService {
      * Fetch player profile by id
      * @param id of player
      * @return player profile
-     * @throws IOException if error occurs
      */
     public Optional<PlayerProfile> getProfile(UUID id) {
         String profileId = id.toString().replace("-", "");
@@ -49,7 +48,7 @@ public class SessionService {
      * @return response
      */
     public Optional<JoinServerResponse> joinServer(MinecraftSession session, String serverId) {
-        JoinServerRequest joinReq = new JoinServerRequest(AuthenticationService.Agent.MINECRAFT, session.accessToken, toProfileId(session.id), serverId);
+        JoinServerRequest joinReq = new JoinServerRequest(AuthenticationService.Agent.MINECRAFT, session.accessToken, toMinecraftId(session.id), serverId);
         http.post(URI.create(sessionServerBaseUrl + "session/minecraft/join"), joinReq, Response.noContent());
         return Optional.of(new JoinServerResponse(serverId));
     }
@@ -64,7 +63,7 @@ public class SessionService {
         try {
             URI uri = URI.create(String.format(sessionServerBaseUrl + "session/minecraft/hasJoined?username=%s&serverId=%s", URLEncoder.encode(session.username, StandardCharsets.UTF_8), serverId));
             Optional<HasJoinedResponse> hasJoinedResponse = http.httpGet(uri, Response.json(HasJoinedResponse.class));
-            return hasJoinedResponse.map(resp -> resp.id.equals(toProfileId(session.id))).orElse(false);
+            return hasJoinedResponse.map(resp -> resp.id.equals(toMinecraftId(session.id))).orElse(false);
         } catch (Throwable e) {
             LOGGER.error("Couldn't verify " + session.username,e);
             return false;
