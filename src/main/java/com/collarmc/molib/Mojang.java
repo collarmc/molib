@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.ProxySelector;
 import java.util.UUID;
 
 public final class Mojang {
@@ -28,17 +29,18 @@ public final class Mojang {
             .configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, false)
             .build();
 
-    private final Http http = new Http(MAPPER);
+    private final Http http;
     private final String sessionServerBaseUrl;
     private final String authServerBaseUrl;
 
-    public Mojang(String sessionServerBaseUrl, String authServerBaseUrl) {
+    public Mojang(String sessionServerBaseUrl, String authServerBaseUrl, ProxySelector proxySelector) {
+        this.http = new Http(proxySelector, MAPPER);
         this.sessionServerBaseUrl = sessionServerBaseUrl.endsWith("/") ? sessionServerBaseUrl : sessionServerBaseUrl + "/";
         this.authServerBaseUrl = authServerBaseUrl.endsWith("/") ? authServerBaseUrl : authServerBaseUrl + "/";
     }
 
     public Mojang() {
-        this(Mojang.DEFAULT_SESSION_SERVER, Mojang.DEFAULT_AUTH_SERVER);
+        this(Mojang.DEFAULT_SESSION_SERVER, Mojang.DEFAULT_AUTH_SERVER, null);
     }
 
     public AuthenticationService auth() {

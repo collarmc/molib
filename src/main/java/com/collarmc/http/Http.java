@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -13,10 +14,15 @@ import java.util.Optional;
 
 public final class Http {
     private final ObjectMapper mapper;
-    private final HttpClient http = HttpClient.newBuilder().build();
+    private final HttpClient http;
 
-    public Http(ObjectMapper mapper) {
+    public Http(ProxySelector proxySelector, ObjectMapper mapper) {
         this.mapper = mapper;
+        HttpClient.Builder builder = HttpClient.newBuilder();
+        if (proxySelector != null) {
+            builder = builder.proxy(proxySelector);
+        }
+        http = builder.build();
     }
 
     public <T> Optional<T> post(URI uri, Object req, Response<T> responseType) {
