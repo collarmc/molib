@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -16,11 +17,14 @@ public final class Http {
     private final ObjectMapper mapper;
     private final HttpClient http;
 
-    public Http(ProxySelector proxySelector, ObjectMapper mapper) {
+    public Http(ProxySelector proxySelector, Authenticator authenticator, ObjectMapper mapper) {
         this.mapper = mapper;
         HttpClient.Builder builder = HttpClient.newBuilder();
         if (proxySelector != null) {
             builder = builder.proxy(proxySelector);
+        }
+        if (authenticator != null) {
+            builder = builder.authenticator(authenticator);
         }
         http = builder.build();
     }
