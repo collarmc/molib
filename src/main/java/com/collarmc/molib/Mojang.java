@@ -33,11 +33,13 @@ public final class Mojang {
     private final Http http;
     private final String sessionServerBaseUrl;
     private final String authServerBaseUrl;
+    public final boolean isUsingProxy;
 
     public Mojang(String sessionServerBaseUrl, String authServerBaseUrl, ProxySelector proxySelector, Authenticator authenticator) {
         this.http = new Http(proxySelector, authenticator, MAPPER);
         this.sessionServerBaseUrl = sessionServerBaseUrl.endsWith("/") ? sessionServerBaseUrl : sessionServerBaseUrl + "/";
         this.authServerBaseUrl = authServerBaseUrl.endsWith("/") ? authServerBaseUrl : authServerBaseUrl + "/";
+        this.isUsingProxy = proxySelector != null;
     }
 
     public Mojang() {
