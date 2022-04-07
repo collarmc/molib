@@ -38,7 +38,7 @@ public class RateLimiter {
      * Do something with the Mojang service. Blocks until Semaphore can be acquired.
      * @param runnable to execute
      */
-    public void perform(Runnable runnable) {
+    public void perform(Performer runnable) throws RuntimeException {
         performAndReturn(() -> {
             runnable.run();
             return Optional.empty();
@@ -57,5 +57,9 @@ public class RateLimiter {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public interface Performer {
+        void run() throws RuntimeException;
     }
 }
