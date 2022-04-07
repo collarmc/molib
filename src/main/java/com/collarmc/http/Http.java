@@ -67,7 +67,7 @@ public final class Http {
             case 404 -> throw new HttpException.NotFoundException("not found");
             case 409 -> throw new HttpException.ConflictException("conflict");
             case 500 -> throw new HttpException.ServerErrorException("server error");
-            default -> throw new HttpException.UnmappedHttpException(response.statusCode(), "unmapped");
+            default -> throw new HttpException.UnmappedHttpException(response.statusCode(), "unmapped error " + code);
         };
     }
 }
