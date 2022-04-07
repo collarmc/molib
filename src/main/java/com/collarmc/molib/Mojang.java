@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.net.Authenticator;
 import java.net.ProxySelector;
+import java.net.http.HttpClient;
 import java.util.UUID;
 
 public final class Mojang {
@@ -35,15 +36,15 @@ public final class Mojang {
     private final String authServerBaseUrl;
     public final boolean isUsingProxy;
 
-    public Mojang(String sessionServerBaseUrl, String authServerBaseUrl, ProxySelector proxySelector, Authenticator authenticator) {
-        this.http = new Http(proxySelector, authenticator, MAPPER);
+    public Mojang(String sessionServerBaseUrl, String authServerBaseUrl, HttpClient httpClient) {
+        this.http = new Http(httpClient, MAPPER);
         this.sessionServerBaseUrl = sessionServerBaseUrl.endsWith("/") ? sessionServerBaseUrl : sessionServerBaseUrl + "/";
         this.authServerBaseUrl = authServerBaseUrl.endsWith("/") ? authServerBaseUrl : authServerBaseUrl + "/";
-        this.isUsingProxy = proxySelector != null;
+        this.isUsingProxy = httpClient.proxy().isPresent();
     }
 
     public Mojang() {
-        this(Mojang.DEFAULT_SESSION_SERVER, Mojang.DEFAULT_AUTH_SERVER, null, null);
+        this(Mojang.DEFAULT_SESSION_SERVER, Mojang.DEFAULT_AUTH_SERVER, HttpClient.newHttpClient());
     }
 
     public AuthenticationService auth() {

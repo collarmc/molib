@@ -17,16 +17,9 @@ public final class Http {
     private final ObjectMapper mapper;
     private final HttpClient http;
 
-    public Http(ProxySelector proxySelector, Authenticator authenticator, ObjectMapper mapper) {
+    public Http(HttpClient http, ObjectMapper mapper) {
         this.mapper = mapper;
-        HttpClient.Builder builder = HttpClient.newBuilder();
-        if (proxySelector != null) {
-            builder = builder.proxy(proxySelector);
-        }
-        if (authenticator != null) {
-            builder = builder.authenticator(authenticator);
-        }
-        http = builder.build();
+        this.http = http;
     }
 
     public <T> Optional<T> post(URI uri, Object req, Response<T> responseType) {
