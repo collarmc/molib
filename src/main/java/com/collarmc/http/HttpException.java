@@ -66,6 +66,12 @@ public abstract class HttpException extends RuntimeException {
         }
     }
 
+    public final static class TooManyRequestsException extends HttpException {
+        public TooManyRequestsException(String message) {
+            super(429, message);
+        }
+    }
+
     public final static class UnmappedHttpException extends HttpException {
         public UnmappedHttpException(int httpCode, String message) {
             super(httpCode, message);

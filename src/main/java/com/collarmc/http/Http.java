@@ -66,6 +66,7 @@ public final class Http {
             case 403 -> throw new HttpException.ForbiddenException("forbidden");
             case 404 -> throw new HttpException.NotFoundException("not found");
             case 409 -> throw new HttpException.ConflictException("conflict");
+            case 429 -> throw new HttpException.TooManyRequestsException("too many requests: " + response.body());
             case 500 -> throw new HttpException.ServerErrorException("server error");
             default -> throw new HttpException.UnmappedHttpException(response.statusCode(), "unmapped error " + code);
         };
