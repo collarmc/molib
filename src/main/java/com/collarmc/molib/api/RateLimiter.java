@@ -20,7 +20,7 @@ public class RateLimiter {
      * Do something with the Mojang service. Blocks until Semaphore can be acquired.
      * @param callable to execute
      */
-    public <T> Optional<T> perform(Callable<Optional<T>> callable) {
+    public <T> Optional<T> performAndReturn(Callable<Optional<T>> callable) {
         semaphore.acquireUninterruptibly();
         // Run cooldown first so that we can release the semaphore earlier
         // This means we can release threads back to executors sooner
@@ -32,6 +32,17 @@ public class RateLimiter {
         } finally {
             semaphore.release();
         }
+    }
+
+    /**
+     * Do something with the Mojang service. Blocks until Semaphore can be acquired.
+     * @param runnable to execute
+     */
+    public void perform(Runnable runnable) {
+        performAndReturn(() -> {
+            runnable.run();
+            return Optional.empty();
+        });
     }
 
     private void coolDown() {
