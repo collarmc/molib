@@ -2,6 +2,7 @@ package com.collarmc.molib;
 
 import com.collarmc.http.Http;
 import com.collarmc.molib.authentication.AuthenticationService;
+import com.collarmc.molib.api.ApiService;
 import com.collarmc.molib.session.SessionService;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -11,10 +12,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.Authenticator;
-import java.net.ProxySelector;
 import java.net.http.HttpClient;
-import java.util.UUID;
 
 public final class Mojang {
 
@@ -22,6 +20,7 @@ public final class Mojang {
 
     public static final String DEFAULT_AUTH_SERVER = "https://authserver.mojang.com";
     public static final String DEFAULT_SESSION_SERVER = "https://sessionserver.mojang.com";
+    public static final String DEFAULT_API_SERVER = "https://api.mojang.com";
 
     public static final ObjectMapper MAPPER = JsonMapper.builder()
             .configure(JsonReadFeature.ALLOW_TRAILING_COMMA, true)
@@ -34,17 +33,19 @@ public final class Mojang {
     private final Http http;
     private final String sessionServerBaseUrl;
     private final String authServerBaseUrl;
+    private final String apiServerBaseUrl;
     public final boolean isUsingProxy;
 
-    public Mojang(String sessionServerBaseUrl, String authServerBaseUrl, HttpClient httpClient) {
+    public Mojang(String sessionServerBaseUrl, String authServerBaseUrl, String apiServerBaseUrl, HttpClient httpClient) {
         this.http = new Http(httpClient, MAPPER);
         this.sessionServerBaseUrl = sessionServerBaseUrl.endsWith("/") ? sessionServerBaseUrl : sessionServerBaseUrl + "/";
         this.authServerBaseUrl = authServerBaseUrl.endsWith("/") ? authServerBaseUrl : authServerBaseUrl + "/";
+        this.apiServerBaseUrl = apiServerBaseUrl.endsWith("/") ? apiServerBaseUrl : apiServerBaseUrl + "/";
         this.isUsingProxy = httpClient.proxy().isPresent();
     }
 
     public Mojang() {
-        this(Mojang.DEFAULT_SESSION_SERVER, Mojang.DEFAULT_AUTH_SERVER, HttpClient.newHttpClient());
+        this(Mojang.DEFAULT_SESSION_SERVER, Mojang.DEFAULT_AUTH_SERVER, Mojang.DEFAULT_API_SERVER, HttpClient.newHttpClient());
     }
 
     public AuthenticationService auth() {
@@ -53,5 +54,9 @@ public final class Mojang {
 
     public SessionService sessions() {
         return new SessionService(sessionServerBaseUrl, http);
+    }
+
+    public ApiService api() {
+        return new ApiService(apiServerBaseUrl, http);
     }
 }
