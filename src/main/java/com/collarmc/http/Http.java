@@ -11,24 +11,28 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
 
 public final class Http {
     private final ObjectMapper mapper;
     private final HttpClient http;
+    private final Map<String, String> headers;
 
-    public Http(HttpClient http, ObjectMapper mapper) {
+    public Http(HttpClient http, ObjectMapper mapper, Map<String, String> headers) {
         this.mapper = mapper;
+        this.headers = headers;
         this.http = http;
     }
 
     public <T> Optional<T> post(URI uri, Object req, Response<T> responseType) {
         HttpRequest request;
         try {
-            request = HttpRequest.newBuilder()
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(uri)
-                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(req)))
-                    .build();
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(req)));
+            headers.forEach(builder::header);
+            request = builder.build();
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);
         }
@@ -36,11 +40,11 @@ public final class Http {
     }
 
     public <T> Optional<T> httpGet(URI uri, Response<T> responseType) {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(uri)
-                .GET()
-                .build();
-        return execute(request, responseType);
+                .GET();
+        headers.forEach(builder::header);
+        return execute(builder.build(), responseType);
     }
 
     private <T> Optional<T> execute(HttpRequest request, Response<T> responseType) {

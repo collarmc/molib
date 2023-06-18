@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.http.HttpClient;
+import java.util.Map;
 
 public final class Mojang {
 
@@ -37,7 +38,7 @@ public final class Mojang {
     public final boolean isUsingProxy;
 
     public Mojang(String sessionServerBaseUrl, String authServerBaseUrl, String apiServerBaseUrl, HttpClient httpClient) {
-        this.http = new Http(httpClient, MAPPER);
+        this.http = new Http(httpClient, MAPPER, Map.of());
         this.sessionServerBaseUrl = sessionServerBaseUrl.endsWith("/") ? sessionServerBaseUrl : sessionServerBaseUrl + "/";
         this.authServerBaseUrl = authServerBaseUrl.endsWith("/") ? authServerBaseUrl : authServerBaseUrl + "/";
         this.apiServerBaseUrl = apiServerBaseUrl.endsWith("/") ? apiServerBaseUrl : apiServerBaseUrl + "/";
